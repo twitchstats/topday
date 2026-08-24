@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>TOP 3 CHATTERS DAILY — FILTHYCHILD</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Rubik:wght@500;700&display=swap');
+
+  :root{
+    --accent:#9146FF;
+    --accent2:#bf94ff;
+    --gold:#FFD700;
+    --silver:#C0C0C0;
+    --bronze:#CD7F32;
+    --bg:transparent;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background: var(--bg);
+    font-family:'Rubik', sans-serif;
+    overflow:hidden;
+  }
+  #wrap{
+    width:440px;
+    padding:18px 20px 20px 20px;
+    position:relative;
+  }
+  #title{
+    font-family:'Montserrat', sans-serif;
+    font-weight:900;
+    font-size:22px;
+    letter-spacing:1px;
+    color:#fff;
+    text-transform:uppercase;
+    text-shadow: 0 0 8px var(--accent2), 0 0 18px rgba(145,70,255,0.6);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  #subtitle{
+    font-size:12px;
+    color:#c7aeff;
+    margin-top:2px;
+    margin-bottom:14px;
+    letter-spacing:0.5px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  #dot{
+    width:8px; height:8px; border-radius:50%;
+    background:#ff4444;
+    box-shadow:0 0 6px #ff4444;
+    transition:all .3s ease;
+  }
+  #dot.live{
+    background:var(--accent2);
+    box-shadow:0 0 8px var(--accent2), 0 0 16px var(--accent2);
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.4; }
+  }
+
+  .row{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:linear-gradient(90deg, rgba(28,18,45,0.9), rgba(18,12,28,0.6));
+    border:1px solid rgba(145,70,255,0.3);
+    border-radius:12px;
+    padding:9px 14px;
+    margin-bottom:10px;
+    overflow:hidden;
+    transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .row:hover{ transform: translateX(2px); }
+  .row.rank1{
+    border-color: rgba(255,215,0,0.55);
+    box-shadow: 0 0 16px rgba(255,215,0,0.15), inset 0 0 20px rgba(255,215,0,0.05);
+  }
+  .row.rank2{ border-color: rgba(192,192,192,0.4); }
+  .row.rank3{ border-color: rgba(205,127,50,0.4); }
+  .row .bar{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    background:linear-gradient(90deg, rgba(145,70,255,0.4), rgba(191,148,255,0.08));
+    width:0%;
+    transition: width .6s cubic-bezier(.22,1,.36,1);
+    z-index:0;
+  }
+
+  .avatar-wrap{
+    position:relative;
+    width:44px;
+    height:44px;
+    flex-shrink:0;
+    z-index:1;
+  }
+  .avatar{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    object-fit:cover;
+    display:block;
+    background:#2a1f3d;
+    border:2px solid rgba(255,255,255,0.25);
+  }
+  .rank1 .avatar{
+    width:48px; height:48px;
+    border-color: var(--gold);
+    box-shadow:0 0 12px rgba(255,215,0,0.6);
+  }
+  .rank2 .avatar{ border-color: var(--silver); box-shadow:0 0 8px rgba(192,192,192,0.5); }
+  .rank3 .avatar{ border-color: var(--bronze); box-shadow:0 0 8px rgba(205,127,50,0.5); }
+  .rank1 .avatar-wrap{ width:48px; height:48px; }
+
+  .crown{
+    position:absolute;
+    top:-13px;
+    left:50%;
+    transform:translateX(-50%) rotate(0deg);
+    font-size:16px;
+    filter: drop-shadow(0 0 4px rgba(255,215,0,0.9));
+  }
+
+  .badge{
+    position:absolute;
+    bottom:-3px;
+    right:-3px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Montserrat', sans-serif;
+    font-weight:900;
+    font-size:11px;
+    color:#1a1226;
+    border:2px solid #1a1226;
+    z-index:2;
+  }
+  .badge.r1{ background:var(--gold); }
+  .badge.r2{ background:var(--silver); }
+  .badge.r3{ background:var(--bronze); }
+
+  .info{
+    flex:1;
+    z-index:1;
+    min-width:0;
+  }
+  .name{
+    font-weight:700;
+    font-size:15px;
+    color:#fff;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    text-shadow:0 1px 2px rgba(0,0,0,0.6);
+  }
+  .msglabel{
+    font-size:10.5px;
+    color:#9b86c4;
+    letter-spacing:0.3px;
+    margin-top:1px;
+  }
+  .count{
+    font-family:'Montserrat', sans-serif;
+    font-weight:800;
+    font-size:18px;
+    color:var(--accent2);
+    z-index:1;
+    text-shadow:0 0 6px rgba(145,70,255,0.5);
+    min-width:34px;
+    text-align:right;
+  }
+  .empty{
+    color:#8a76b3;
+    font-size:13px;
+    font-style:italic;
+    padding:6px 4px 2px 4px;
+  }
+  #footer{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:#a894d1;
+    margin-top:6px;
+    letter-spacing:0.4px;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <div id="title">TOP 3 ЗА ДЕНЬ</div>
+  <div id="subtitle"><span id="dot"></span> <span id="status">подключение...</span></div>
+
+  <div id="list">
+    <div class="empty">Ждём сообщения в чате...</div>
+  </div>
+
+  <div id="footer">
+    <span id="totalMsgs">Сообщений: 0</span>
+    <span id="totalUsers">Чаттеров: 0</span>
+  </div>
+</div>
+
+<!-- Скрытый инпут для восстановления статы из бэкапа. Не отображается на трансляции. -->
+<input type="file" id="importFile" accept="application/json" style="display:none" />
+
+<script>
+const CHANNEL = "filthychild"; 
+const STORAGE_KEY = "twitch_top3_filthychild_daily";
+const PERIOD_MS = 24 * 60 * 60 * 1000; // ровно 24 часа
+const PERIOD_CHECK_INTERVAL_MS = 30 * 1000; // как часто проверяем истечение периода
+
+let stats = {};        
+let totalMessages = 0;
+let periodStart = Date.now();
+
+// Истёк ли 24-часовой период с момента periodStart
+function periodExpired(start, now){
+  return (now - start) >= PERIOD_MS;
+}
+
+let ws = null;
+let reconnectDelay = 1000;
+const MAX_RECONNECT_DELAY = 15000;
+
+const dotEl = document.getElementById('dot');
+const statusEl = document.getElementById('status');
+const listEl = document.getElementById('list');
+const totalMsgsEl = document.getElementById('totalMsgs');
+const totalUsersEl = document.getElementById('totalUsers');
+
+// Загрузка данных из памяти
+function loadStats() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const savedPeriodStart = parsed.periodStart || Date.now();
+      if (periodExpired(savedPeriodStart, Date.now())) {
+        // Прошло 24 часа — сбрасываем
+        resetStats();
+      } else {
+        stats = parsed.stats || {};
+        totalMessages = parsed.totalMessages || 0;
+        periodStart = savedPeriodStart;
+      }
+    }
+  } catch(e) {
+    console.error("Ошибка загрузки сохранений", e);
+  }
+}
+
+// Сохранение данных в память
+function saveStats() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      stats,
+      totalMessages,
+      periodStart
+    }));
+  } catch(e) {
+    console.error("Ошибка сохранения", e);
+  }
+}
+
+function resetStats() {
+  stats = {};
+  totalMessages = 0;
+  periodStart = Date.now();
+  saveStats();
+  render();
+  scheduleReload(); // пересчитываем момент следующей перезагрузки от нового periodStart
+}
+
+// ==== Бэкап / восстановление в файл ====
+// Работает через горячие клавиши, чтобы кнопки не попадали в кадр трансляции.
+// В OBS: правый клик по источнику → Interact → нажать клавишу.
+
+function exportStats(){
+  try {
+    const payload = { channel: CHANNEL, exportedAt: new Date().toISOString(), stats, totalMessages, periodStart };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStr = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `top3_${CHANNEL}_backup_${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus('бэкап сохранён ✓', dotEl.classList.contains('live'));
+    setTimeout(() => setStatus('в эфире — ' + CHANNEL.toUpperCase(), true), 2000);
+  } catch(e) {
+    console.error("Ошибка экспорта", e);
+  }
+}
+
+function importStats(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      stats = parsed.stats || {};
+      totalMessages = parsed.totalMessages || 0;
+      periodStart = parsed.periodStart || Date.now();
+      saveStats();
+      render();
+      setStatus('бэкап восстановлен ✓', dotEl.classList.contains('live'));
+      setTimeout(() => setStatus('в эфире — ' + CHANNEL.toUpperCase(), true), 2000);
+    } catch(e) {
+      console.error("Ошибка импорта: неверный файл", e);
+      setStatus('ошибка импорта файла', false);
+    }
+  };
+  reader.readAsText(file);
+}
+
+const importFileEl = document.getElementById('importFile');
+importFileEl.addEventListener('change', () => {
+  if(importFileEl.files && importFileEl.files[0]){
+    importStats(importFileEl.files[0]);
+  }
+  importFileEl.value = '';
+});
+
+document.addEventListener('keydown', (e) => {
+  // Игнорируем, если фокус в текстовом поле (на будущее, если появится ввод)
+  if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if(e.key === 'e' || e.key === 'E'){
+    exportStats();
+  }
+  if(e.key === 'i' || e.key === 'I'){
+    importFileEl.click();
+  }
+});
+
+function setStatus(text, live){
+  statusEl.textContent = text;
+  dotEl.classList.toggle('live', !!live);
+}
+
+function connect(){
+  setStatus('подключение...', false);
+  ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+  ws.onopen = () => {
+    const nick = 'justinfan' + Math.floor(10000 + Math.random()*89999);
+    ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+    ws.send('PASS SCHMOOPIIE');
+    ws.send('NICK ' + nick);
+    ws.send('JOIN #' + CHANNEL.toLowerCase());
+  };
+
+  ws.onmessage = (event) => {
+    const lines = event.data.split('\r\n').filter(Boolean);
+    for(const line of lines){
+      handleLine(line);
+    }
+  };
+
+  ws.onclose = () => {
+    setStatus('отключено, переподключение...', false);
+    scheduleReconnect();
+  };
+
+  ws.onerror = () => {
+    setStatus('ошибка соединения...', false);
+    try{ ws.close(); }catch(e){}
+  };
+}
+
+function scheduleReconnect(){
+  setTimeout(connect, reconnectDelay);
+  reconnectDelay = Math.min(reconnectDelay * 1.6, MAX_RECONNECT_DELAY);
+}
+
+function handleLine(line){
+  if(line.startsWith('PING')){
+    ws.send('PONG :tmi.twitch.tv');
+    return;
+  }
+
+  if(line.includes(' 366 ') || line.includes('JOIN #')){
+    setStatus('в эфире — ' + CHANNEL.toUpperCase(), true);
+    reconnectDelay = 1000;
+  }
+
+  if(line.includes('PRIVMSG')){
+    const msg = parsePrivmsg(line);
+    if(msg) registerMessage(msg);
+  }
+}
+
+function parsePrivmsg(line){
+  let tags = {};
+  let rest = line;
+
+  if(line.startsWith('@')){
+    const spaceIdx = line.indexOf(' ');
+    const tagStr = line.slice(1, spaceIdx);
+    rest = line.slice(spaceIdx + 1);
+    tagStr.split(';').forEach(pair => {
+      const eq = pair.indexOf('=');
+      if(eq > -1){
+        tags[pair.slice(0, eq)] = pair.slice(eq + 1);
+      }
+    });
+  }
+
+  const match = rest.match(/^:([^!]+)!/);
+  if(!match) return null;
+  const login = match[1].toLowerCase();
+
+  const msgMatch = rest.match(/PRIVMSG #[^ ]+ :(.*)/);
+  const text = msgMatch ? msgMatch[1] : '';
+
+  const displayName = tags['display-name'] && tags['display-name'].length
+    ? tags['display-name']
+    : login;
+  const color = tags['color'] && tags['color'].length ? tags['color'] : null;
+
+  return { login, displayName, color, text };
+}
+
+function registerMessage(msg){
+  // Ручной сброс топа командой !resettop от стримера
+  if(msg.text.trim() === '!resettop' && msg.login === CHANNEL.toLowerCase()) {
+    resetStats();
+    return; // Не считаем команду сброса за обычное сообщение
+  }
+
+  // Обновление статы
+  if(!stats[msg.login]){
+    stats[msg.login] = { name: msg.displayName, color: msg.color, count: 0 };
+  }
+  stats[msg.login].name = msg.displayName;
+  if(msg.color) stats[msg.login].color = msg.color;
+  stats[msg.login].count += 1;
+  totalMessages += 1;
+
+  saveStats();
+  render();
+}
+
+function fallbackColor(seed){
+  const palette = ['#9146FF','#bf94ff','#00e5ff','#ff7ce0','#ffd23f','#ff6b6b','#6bd8ff'];
+  let hash = 0;
+  for(let i=0;i<seed.length;i++) hash = seed.charCodeAt(i) + ((hash<<5)-hash);
+  return palette[Math.abs(hash) % palette.length];
+}
+
+let lastRenderKey = '';
+
+function render(){
+  const entries = Object.entries(stats)
+    .map(([login, v]) => ({ login, ...v }))
+    .sort((a,b) => b.count - a.count)
+    .slice(0, 3);
+
+  const key = entries.map(e => e.login + ':' + e.count).join('|');
+
+  totalMsgsEl.textContent = 'Сообщений: ' + totalMessages;
+  totalUsersEl.textContent = 'Чаттеров: ' + Object.keys(stats).length;
+
+  if(entries.length === 0){
+    listEl.innerHTML = '<div class="empty">Ждём сообщения в чате...</div>';
+    return;
+  }
+
+  const maxCount = entries[0].count || 1;
+  const medals = ['r1','r2','r3'];
+  const rankNum = ['1','2','3'];
+
+  listEl.innerHTML = entries.map((e, i) => {
+    const pct = Math.max(8, Math.round((e.count / maxCount) * 100));
+    const color = e.color || fallbackColor(e.login);
+    const initialsUrl = initialsAvatar(e.name, color);
+    const crown = i === 0 ? '<div class="crown">👑</div>' : '';
+    return `
+      <div class="row ${medals[i]}">
+        <div class="bar" style="width:${pct}%"></div>
+        <div class="avatar-wrap">
+          ${crown}
+          <img class="avatar" src="${initialsUrl}" data-login="${e.login}"
+               onerror="this.onerror=null; this.src='${initialsUrl}';" />
+          <div class="badge ${medals[i]}">${rankNum[i]}</div>
+        </div>
+        <div class="info">
+          <div class="name" style="color:${color}">${escapeHtml(e.name)}</div>
+          <div class="msglabel">сообщений в чате</div>
+        </div>
+        <div class="count">${e.count}</div>
+      </div>
+    `;
+  }).join('');
+
+  loadRealAvatars(entries);
+
+  lastRenderKey = key;
+}
+
+// Аватарка-заглушка с инициалом, пока не подгрузилась настоящая
+function initialsAvatar(name, color){
+  const initial = encodeURIComponent((name || '?').trim().charAt(0).toUpperCase() || '?');
+  const bg = (color || '#9146FF').replace('#','');
+  return `https://ui-avatars.com/api/?name=${initial}&background=${bg}&color=fff&bold=true&size=96`;
+}
+
+// Кэш реальных аватарок Twitch, чтобы не дёргать сервис лишний раз
+const avatarCache = {};
+
+async function loadRealAvatars(entries){
+  for(const e of entries){
+    if(avatarCache[e.login]){
+      applyAvatar(e.login, avatarCache[e.login]);
+      continue;
+    }
+    fetchTwitchAvatar(e.login);
+  }
+}
+
+function fetchTwitchAvatar(login){
+  // Публичный сервис без токенов — отдаёт прямую ссылку на CDN-аватар Twitch
+  fetch('https://decapi.me/twitch/avatar/' + login)
+    .then(r => r.text())
+    .then(url => {
+      url = url.trim();
+      if(url && url.startsWith('http')){
+        avatarCache[login] = url;
+        applyAvatar(login, url);
+      }
+    })
+    .catch(() => {}); // остаётся заглушка с инициалом
+}
+
+function applyAvatar(login, url){
+  const img = listEl.querySelector(`img[data-login="${CSS.escape(login)}"]`);
+  if(img && img.src !== url) img.src = url;
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Автообновление раз в 24 часа: виджет в OBS обычно не перезагружается,
+// поэтому периодически проверяем, не истёк ли 24-часовой период с момента
+// periodStart, и если истёк — сбрасываем статистику сами, без перезапуска источника.
+function checkPeriodExpired(){
+  if(periodExpired(periodStart, Date.now())){
+    resetStats();
+  }
+}
+setInterval(checkPeriodExpired, PERIOD_CHECK_INTERVAL_MS);
+
+// Также проверяем при возврате вкладки/окна в фокус (на случай долгого простоя)
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    checkPeriodExpired();
+  }
+});
+
+// Доп. защита от "зависания" источника в OBS: ровно через 24 часа полностью
+// перезагружаем страницу, а не только сбрасываем статистику. Это лечит
+// возможные утечки памяти/битые WebSocket-соединения при многодневной
+// непрерывной работе браузерного источника, из-за которых виджет мог
+// "багаться" — зависать, переставать обновляться и т.п.
+let periodReloadTimer = null;
+function scheduleReload(){
+  if(periodReloadTimer) clearTimeout(periodReloadTimer);
+  const msUntilReload = Math.max(60 * 1000, (periodStart + PERIOD_MS + 5000) - Date.now());
+  periodReloadTimer = setTimeout(() => {
+    location.reload();
+  }, msUntilReload);
+}
+
+// Защита от дублирующихся соединений: не даём открыть второй WebSocket,
+// если предыдущий ещё жив (например, при ручном повторном вызове connect()).
+const originalConnect = connect;
+connect = function(){
+  if(ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)){
+    try{ ws.close(); }catch(e){}
+  }
+  originalConnect();
+};
+
+// Загружаем статистику перед подключением
+loadStats();
+render();
+connect();
+scheduleReload();
+</script>
+</body>
+</html>
